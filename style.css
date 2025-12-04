@@ -1,0 +1,8 @@
+/* style.css - style cơ bản */
+body { font-family: Inter, system-ui, Arial, sans-serif; }
+.logo { height: 48px; }
+.card { margin-top: 12px; }
+.read-the-docs { margin-top: 20px; color: #6b7280; }
+
+/* một số style bổ sung */
+.container { max-width: 1100px; }

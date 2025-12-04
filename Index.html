@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arya Dịch</title>
+
+  <!-- Tesseract OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
+  <style>
+    body {
+    background-image: url("assets/background.jpg");
+    background-size: cover;     /* Cho ảnh phủ full màn */
+    background-position: center; /* Căn giữa */
+    background-attachment: fixed; /* Ảnh đứng yên khi kéo trang */
+    backdrop-filter: blur(4px); /* Làm mờ nhẹ */
+    font-family: Arial;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.55);
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 850px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      resize: none;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      margin: 5px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #222;
+      text-shadow: 0 0 5px white;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">🌸 Arya Translator - Made by Mikhailovna Hoang 🌸</div>
+
+  <!-- Ngôn ngữ -->
+  <div>
+    <label>Ngôn ngữ nguồn:</label>
+    <select id="sourceLang">
+      <option value="auto">Tự động</option>
+      <option value="en">Tiếng Anh</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="ja">Tiếng Nhật</option>
+      <option value="ko">Tiếng Hàn</option>
+      <option value="zh-CN">Trung Giản Thể</option>
+      <option value="zh-TW">Trung Phồn Thể</option>
+      <option value="fr">Tiếng Pháp</option>
+      <option value="de">Tiếng Đức</option>
+      <option value="es">Tây Ban Nha</option>
+      <option value="ru">Tiếng Nga</option>
+    </select>
+
+    <label>Ngôn ngữ đích:</label>
+    <select id="targetLang">
+      <option value="vi">Tiếng Việt</option>
+      <option value="en">Tiếng Anh</option>
+      <option value="ja">Tiếng Nhật</option>
+      <option value="ko">Tiếng Hàn</option>
+      <option value="zh-CN">Trung Giản Thể</option>
+      <option value="zh-TW">Trung Phồn Thể</option>
+      <option value="fr">Tiếng Pháp</option>
+      <option value="de">Tiếng Đức</option>
+      <option value="es">Tây Ban Nha</option>
+      <option value="ru">Tiếng Nga</option>
+    </select>
+  </div>
+
+  <!-- Ô nhập -->
+  <textarea id="inputText" placeholder="Nhập hoặc quét văn bản..."></textarea>
+
+  <!-- Nút chức năng -->
+  <button onclick="translateText()">Dịch</button>
+  <button onclick="speakText()">🔊 Giọng đọc</button>
+  <button onclick="openCamera()">📷 Mở Camera</button>
+  <button onclick="openFile()">🖼 Chọn ảnh</button>
+
+  <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+  <!-- Camera preview -->
+  <video id="camera" width="350" autoplay style="display:none; margin-top:10px; border-radius:10px;"></video>
+  <button id="captureBtn" onclick="captureImage()" style="display:none;">📌 Chụp & Quét</button>
+
+  <!-- Kết quả -->
+  <textarea id="outputText" placeholder="Kết quả dịch sẽ hiện ở đây..."></textarea>
+
+</div>
+
+<script>
+/* --- DỊCH --- */
+function translateText() {
+  const text = document.getElementById("inputText").value;
+  const source = document.getElementById("sourceLang").value;
+  const target = document.getElementById("targetLang").value;
+
+  if (!text.trim()) {
+    document.getElementById("outputText").value = "Sư đệ chưa nhập gì cả...";
+    return;
+  }
+
+  const url =
+    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" +
+    source + "&tl=" + target + "&dt=t&q=" + encodeURIComponent(text);
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("outputText").value = data[0][0][0];
+    })
+    .catch(() => {
+      document.getElementById("outputText").value = "Lỗi dịch, thử lại nhen sư đệ.";
+    });
+}
+
+/* --- GIỌNG ĐỌC --- */
+function speakText() {
+  const text = document.getElementById("outputText").value;
+  if (!text.trim()) return;
+
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = document.getElementById("targetLang").value;
+  speechSynthesis.speak(msg);
+}
+
+/* --- MỞ FILE --- */
+function openFile() {
+  document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change", function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function () {
+    processImage(reader.result);
+  };
+  reader.readAsDataURL(file);
+});
+
+/* --- CAMERA --- */
+function openCamera() {
+  const video = document.getElementById("camera");
+  const btn = document.getElementById("captureBtn");
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+      video.style.display = "block";
+      btn.style.display = "inline-block";
+    })
+    .catch(() => alert("Không mở được camera"));
+}
+
+function captureImage() {
+  const video = document.getElementById("camera");
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0);
+
+  const imageData = canvas.toDataURL("image/png");
+
+  processImage(imageData);
+}
+
+/* --- OCR (QUÉT VĂN BẢN) --- */
+function processImage(img) {
+  document.getElementById("inputText").value = "⏳ Đang quét chữ...";
+
+  Tesseract.recognize(img, "eng+vie+jpn", {
+    logger: m => console.log(m)
+  })
+  .then(result => {
+    document.getElementById("inputText").value = result.data.text || "Không nhận được chữ.";
+  });
+}
+</script>
+
+</body>
+</html>

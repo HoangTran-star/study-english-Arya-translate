@@ -49,11 +49,11 @@
     button {
       border: none;
       cursor: pointer;
-      background-color: #4CAF50;
+      background-color: #458ba0;
       color: white;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #458ba0;
     }
 
     .title {
@@ -71,7 +71,7 @@
 
 <div class="container">
 
-  <div class="title">🌸 Arya Translator - Made by Mikhailovna Hoang 🌸</div>
+  <div class="title">🌸 Arya Translation Ver0 - Made by Mikhailovna Hoàng 🌸</div>
 
   <!-- Ngôn ngữ -->
   <div>
@@ -86,7 +86,7 @@
       <option value="zh-TW">Trung Phồn Thể</option>
       <option value="fr">Tiếng Pháp</option>
       <option value="de">Tiếng Đức</option>
-      <option value="es">Tây Ban Nha</option>
+      <option value="es">Argentina</option>
       <option value="ru">Tiếng Nga</option>
     </select>
 
@@ -100,7 +100,7 @@
       <option value="zh-TW">Trung Phồn Thể</option>
       <option value="fr">Tiếng Pháp</option>
       <option value="de">Tiếng Đức</option>
-      <option value="es">Tây Ban Nha</option>
+      <option value="es">Argentina</option>
       <option value="ru">Tiếng Nga</option>
     </select>
   </div>
@@ -133,7 +133,7 @@ function translateText() {
   const target = document.getElementById("targetLang").value;
 
   if (!text.trim()) {
-    document.getElementById("outputText").value = "Sư đệ chưa nhập gì cả...";
+    document.getElementById("outputText").value = "Chưa nhập gì cả 'Дурачок''Baka'...";
     return;
   }
 
@@ -147,7 +147,7 @@ function translateText() {
       document.getElementById("outputText").value = data[0][0][0];
     })
     .catch(() => {
-      document.getElementById("outputText").value = "Lỗi dịch, thử lại nhen sư đệ.";
+      document.getElementById("outputText").value = "Lỗi dịch, thử lại nào 'Baka'.";
     });
 }
 
